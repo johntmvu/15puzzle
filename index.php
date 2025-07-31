@@ -1,10 +1,10 @@
 <?php
 session_start();
-require_once 'auth.php';
+require_once 'backend/auth.php';
 
 // If user is logged in, redirect to game, otherwise show login options
 if (isLoggedIn()) {
-    header('Location: ../fifteen.html');
+    header('Location: fifteen.html');
     exit;
 }
 ?>
@@ -15,7 +15,7 @@ if (isLoggedIn()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fifteen Puzzle Game</title>
-    <link href="../assets/fifteen.css" type="text/css" rel="stylesheet">
+    <link href="assets/fifteen.css" type="text/css" rel="stylesheet">
     <style>
         .welcome-container {
             max-width: 600px;
@@ -100,9 +100,9 @@ if (isLoggedIn()) {
         </p>
         
         <div class="action-buttons">
-            <a href="login.php" class="action-btn btn-primary">🔐 Login</a>
-            <a href="register.php" class="action-btn btn-secondary">📝 Register</a>
-            <a href="../fifteen.html" class="action-btn btn-guest">🎮 Play as Guest</a>
+            <a href="backend/login.php" class="action-btn btn-primary">🔐 Login</a>
+            <a href="backend/register.php" class="action-btn btn-secondary">📝 Register</a>
+            <a href="fifteen.html" class="action-btn btn-guest">🎮 Play as Guest</a>
         </div>
         
         <div class="features">
@@ -118,7 +118,7 @@ if (isLoggedIn()) {
         </div>
         
         <div class="action-buttons">
-            <a href="leaderboard.php" class="action-btn btn-secondary">🏆 View Leaderboard</a>
+            <a href="backend/leaderboard.php" class="action-btn btn-secondary">🏆 View Leaderboard</a>
         </div>
     </div>
 </body>

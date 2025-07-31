@@ -56,6 +56,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->execute();
                 $message = "User promoted to admin successfully.";
                 break;
+                
+            case 'edit_user':
+                $user_id = intval($_POST['user_id']);
+                $new_username = trim($_POST['username']);
+                $new_email = trim($_POST['email']);
+                $new_password = trim($_POST['password']);
+                
+                // Validate inputs
+                if (empty($new_username) || empty($new_email)) {
+                    $error = "Username and email are required.";
+                } else {
+                    // Check if username already exists (excluding current user)
+                    $check_stmt = $conn->prepare("SELECT user_id FROM users WHERE username = ? AND user_id != ?");
+                    $check_stmt->bind_param("si", $new_username, $user_id);
+                    $check_stmt->execute();
+                    $check_result = $check_stmt->get_result();
+                    
+                    if ($check_result->num_rows > 0) {
+                        $error = "Username already exists.";
+                    } else {
+                        // Update user details
+                        if (!empty($new_password)) {
+                            // Update with new password
+                            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                            $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, password_hash = ? WHERE user_id = ?");
+                            $stmt->bind_param("sssi", $new_username, $new_email, $hashed_password, $user_id);
+                        } else {
+                            // Update without changing password
+                            $stmt = $conn->prepare("UPDATE users SET username = ?, email = ? WHERE user_id = ?");
+                            $stmt->bind_param("ssi", $new_username, $new_email, $user_id);
+                        }
+                        
+                        if ($stmt->execute()) {
+                            $message = "User details updated successfully.";
+                        } else {
+                            $error = "Error updating user details.";
+                        }
+                    }
+                }
+                break;
         }
     }
 }
@@ -198,6 +238,22 @@ $stats = $stats_result->fetch_assoc();
             background: #27ae60;
             color: white;
         }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+            text-decoration: none;
+        }
+        .btn-info:hover {
+            background: #138496;
+        }
         .btn-warning {
             background: #f39c12;
             color: white;
@@ -288,6 +344,9 @@ $stats = $stats_result->fetch_assoc();
                         <td><?php echo date('M j, Y', strtotime($user['registration_date'])); ?></td>
                         <td><?php echo $user['last_login'] ? date('M j, Y', strtotime($user['last_login'])) : 'Never'; ?></td>
                         <td>
+                            <a href="edit_user.php?id=<?php echo $user['user_id']; ?>" class="action-btn btn-primary">Edit</a>
+                            <a href="player_stats.php?id=<?php echo $user['user_id']; ?>" class="action-btn btn-info">View Stats</a>
+                            
                             <?php if ($user['role'] !== 'admin' || $user['user_id'] != getCurrentUserId()): ?>
                                 <form method="POST" style="display: inline;">
                                     <input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">

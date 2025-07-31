@@ -54,12 +54,18 @@ button:hover {
     font-family: sans-serif;
     text-align: center;
     line-height: 96px;
-    cursor: pointer;
+    cursor: default;
+    transition: all 0.3s ease;
 }
 
 .movablepiece {
+    cursor: pointer;
+}
+
+.movablepiece:hover {
     border-color: red;
-    color: #bc0a19;
+    color: #006600;
+    text-decoration: underline;
 }
 
 #popup {
