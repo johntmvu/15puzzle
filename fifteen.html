@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fifteen Puzzle</title>
+    <link rel="stylesheet" href="assets/fifteen.css">
+    <script defer src="assets/fifteen.js"></script>
+</head>
+<body>
+
+<!-- background music-->
+    <audio id="bg-music" src="audio/background.mp3" preload="auto" loop></audio>
+    <div id="music-control">
+        <button id="bg-toggle">Play Music</button>
+    </div>
+
+<!-- Audio -->
+    <audio id="win-sound" src="audio/win.mp3" preload="auto"></audio>
+    <audio id="lose-sound" src="audio/lose.mp3" preload="auto"></audio>
+    <audio id="move-sound" src="audio/move.mp3"></audio>
+
+    <div id="overlay"></div>  <!-- blur the background during popups.-->
+    
+    <!-- User authentication section -->
+    <div id="user-info" style="text-align: right; margin: 10px 20px 20px 0; background: rgba(255,255,255,0.9); padding: 8px 12px; border-radius: 5px; float: right; clear: both;">
+        <div id="logged-in-section" style="display: none;">
+            Welcome, <span id="username-display"></span>!
+            <button id="logout-btn" style="margin-left: 10px; padding: 4px 8px; font-size: 12px;">Logout</button>
+        </div>
+        <div id="guest-section">
+            <a href="backend/login.php" style="font-size: 12px;">Login</a> | <a href="backend/register.php" style="font-size: 12px;">Register</a>
+        </div>
+    </div>
+    
+    <div style="clear: both;"></div> <!-- Clear the float -->
+    
+    <h1>Fifteen Puzzle</h1>
+    <div id="timer">Time left: 120</div>
+    <div id="move-count">Moves: 0</div>
+    <div id="puzzlearea"></div> <!-- Display tiles -->
+
+<!--start button-->
+    <div id="controls">
+        <button id="shufflebutton" class="control"> Start </button>   <!-- Button to start or restart the game. -->
+        <button id="leaderboard-btn" class="control"> View Leaderboard </button>   <!-- Button to view leaderboard. -->
+        <button id="admin-btn" class="control" style="display: none;"> Admin Panel </button>   <!-- Admin button (hidden by default) -->
+    </div>
+
+<!-- Win or lose pop up -->
+    <div id="popup">
+        <div class="message" id="popup-message"></div>
+        <button id="popup-play-again">Play Again</button>
+    </div>
+    
+<!-- Links to HTML and CSS validators. --> 
+    <p>
+        <a href="https://validator.w3.org/"><img src="https://www.w3.org/Icons/valid-html401" alt="Valid HTML"></a>
+        <a href="https://jigsaw.w3.org/css-validator/"><img src="https://jigsaw.w3.org/css-validator/images/vcss" alt="Valid CSS"></a>
+    </p>
+</body>
+</html>
