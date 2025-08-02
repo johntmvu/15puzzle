@@ -263,7 +263,7 @@ $backgrounds_result = $conn->query($backgrounds_sql);
     <div class="admin-container">
         <div class="admin-header">
             <h1>🖼️ Background Images Management</h1>
-            <p>Welcome, <?php echo htmlspecialchars(getCurrentUsername()); ?>! | <a href="fifteen.html" style="color: #ecf0f1;">Back to Game</a> | <a href="logout.php" style="color: #ecf0f1;">Logout</a></p>
+            <p>Welcome, <?php echo htmlspecialchars(getCurrentUsername()); ?>! | <a href="../fifteen.html" style="color: #ecf0f1;">Back to Game</a> | <a href="../backend/logout.php" style="color: #ecf0f1;">Logout</a></p>
         </div>
 
         <?php if ($message): ?>

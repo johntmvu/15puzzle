@@ -231,7 +231,7 @@ $hourly_trends = $conn->query($hourly_trends_sql);
     <div class="admin-container">
         <div class="admin-header">
             <h1>📊 Game Statistics Overview</h1>
-            <p>Welcome, <?php echo htmlspecialchars(getCurrentUsername()); ?>! | <a href="fifteen.html" style="color: #ecf0f1;">Back to Game</a> | <a href="logout.php" style="color: #ecf0f1;">Logout</a></p>
+            <p>Welcome, <?php echo htmlspecialchars(getCurrentUsername()); ?>! | <a href="../fifteen.html" style="color: #ecf0f1;">Back to Game</a> | <a href="../backend/logout.php" style="color: #ecf0f1;">Logout</a></p>
         </div>
 
         <div class="admin-nav">

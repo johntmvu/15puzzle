@@ -108,7 +108,7 @@ button:hover {
 #timer {
     position: absolute;
     top: 20px;
-    right: 150px;
+    right: 250px;
     font-size: 20px;
     font-weight: bold;
     color: white;
@@ -117,7 +117,7 @@ button:hover {
 #move-count {
     position: absolute;
     top: 20px;
-    right: 320px;
+    right: 430px;
     font-size: 20px;
     font-weight: bold;
     color: white;
