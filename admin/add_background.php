@@ -164,10 +164,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             height: 100%;
             opacity: 0;
             cursor: pointer;
+            z-index: 1;
         }
         
         .upload-text {
             pointer-events: none;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .file-upload-area.dragover {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+            transform: scale(1.02);
         }
         
         .file-upload-area:hover {
@@ -309,15 +318,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         // File input change handler
         fileInput.addEventListener('change', function(e) {
-            handleFileSelect(this.files[0]);
+            if (this.files && this.files[0]) {
+                handleFileSelect(this.files[0]);
+            }
         });
         
-        // Click handler for upload area
-        fileUploadArea.addEventListener('click', function() {
-            fileInput.click();
+        // Prevent the file input click from being triggered by area click
+        fileInput.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Click handler for upload area (but not the file input itself)
+        fileUploadArea.addEventListener('click', function(e) {
+            // Only trigger if we didn't click the file input directly
+            if (e.target !== fileInput) {
+                fileInput.click();
+            }
         });
         
         // Drag and drop handlers
+        fileUploadArea.addEventListener('dragenter', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.classList.add('dragover');
+        });
+        
         fileUploadArea.addEventListener('dragover', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -327,7 +352,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         fileUploadArea.addEventListener('dragleave', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            this.classList.remove('dragover');
+            // Only remove dragover if we're leaving the upload area entirely
+            if (!this.contains(e.relatedTarget)) {
+                this.classList.remove('dragover');
+            }
         });
         
         fileUploadArea.addEventListener('drop', function(e) {
@@ -336,7 +364,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             this.classList.remove('dragover');
             
             const files = e.dataTransfer.files;
-            if (files.length > 0) {
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                // Set the file input files and trigger change
                 fileInput.files = files;
                 handleFileSelect(files[0]);
             }
@@ -356,6 +385,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 const uploadText = fileUploadArea.querySelector('.upload-text p');
                 if (uploadText) {
                     uploadText.textContent = `Selected: ${file.name}`;
+                    uploadText.style.color = '#4CAF50';
+                    uploadText.style.fontWeight = 'bold';
                 }
             }
         }
