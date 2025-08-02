@@ -34,55 +34,42 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
-            case 'add_background':
-                $image_name = trim($_POST['image_name']);
-                $image_url = trim($_POST['image_url']);
-                
-                if (empty($image_name) || empty($image_url)) {
-                    $error = 'Image name and URL are required.';
-                } else {
-                    $uploaded_by = getCurrentUserId();
-                    $stmt = $conn->prepare("INSERT INTO background_images (image_name, image_url, uploaded_by_user_id) VALUES (?, ?, ?)");
-                    $stmt->bind_param("ssi", $image_name, $image_url, $uploaded_by);
-                    
-                    if ($stmt->execute()) {
-                        $message = "Background image added successfully.";
-                    } else {
-                        $error = "Failed to add background image.";
-                    }
-                }
-                break;
-                
-            case 'toggle_active':
-                $image_id = intval($_POST['image_id']);
-                $is_active = intval($_POST['is_active']);
-                $new_status = $is_active ? 0 : 1;
-                
-                $stmt = $conn->prepare("UPDATE background_images SET is_active = ? WHERE image_id = ?");
-                $stmt->bind_param("ii", $new_status, $image_id);
-                $stmt->execute();
-                $message = $new_status ? "Background activated." : "Background deactivated.";
-                break;
-                
             case 'delete_background':
                 $image_id = intval($_POST['image_id']);
                 
-                // Check if background is being used in any games
-                $check_stmt = $conn->prepare("SELECT COUNT(*) as count FROM game_stats WHERE background_image_id = ?");
-                $check_stmt->bind_param("i", $image_id);
-                $check_stmt->execute();
-                $check_result = $check_stmt->get_result();
-                $usage = $check_result->fetch_assoc();
+                // Get background info to delete file if it's uploaded
+                $bg_stmt = $conn->prepare("SELECT image_url FROM background_images WHERE image_id = ?");
+                $bg_stmt->bind_param("i", $image_id);
+                $bg_stmt->execute();
+                $bg_result = $bg_stmt->get_result();
                 
-                if ($usage['count'] > 0) {
-                    $error = "Cannot delete background image that is used in game records.";
-                } else {
-                    $stmt = $conn->prepare("DELETE FROM background_images WHERE image_id = ?");
-                    $stmt->bind_param("i", $image_id);
-                    if ($stmt->execute()) {
-                        $message = "Background image deleted successfully.";
+                if ($bg_result->num_rows > 0) {
+                    $bg_data = $bg_result->fetch_assoc();
+                    
+                    // Check if background is being used in any games
+                    $check_stmt = $conn->prepare("SELECT COUNT(*) as count FROM game_stats WHERE background_image_id = ?");
+                    $check_stmt->bind_param("i", $image_id);
+                    $check_stmt->execute();
+                    $check_result = $check_stmt->get_result();
+                    $usage = $check_result->fetch_assoc();
+                    
+                    if ($usage['count'] > 0) {
+                        $error = "Cannot delete background image that is used in game records.";
                     } else {
-                        $error = "Failed to delete background image.";
+                        $stmt = $conn->prepare("DELETE FROM background_images WHERE image_id = ?");
+                        $stmt->bind_param("i", $image_id);
+                        if ($stmt->execute()) {
+                            // Delete file if it's in uploads directory
+                            if (strpos($bg_data['image_url'], 'uploads/backgrounds/') !== false) {
+                                $file_path = '../' . $bg_data['image_url'];
+                                if (file_exists($file_path)) {
+                                    unlink($file_path);
+                                }
+                            }
+                            $message = "Background image deleted successfully.";
+                        } else {
+                            $error = "Failed to delete background image.";
+                        }
                     }
                 }
                 break;
@@ -173,6 +160,10 @@ $backgrounds_result = $conn->query($backgrounds_sql);
         .btn-primary {
             background: #3498db;
             color: white;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            background: #2980b9;
         }
         .btn-success {
             background: #27ae60;
@@ -280,22 +271,9 @@ $backgrounds_result = $conn->query($backgrounds_sql);
             <a href="admin_stats.php" class="nav-btn">Game Statistics</a>
         </div>
 
-        <h2>Add New Background Image</h2>
+        <h2>Background Images Management</h2>
         <div class="add-form">
-            <form method="POST">
-                <input type="hidden" name="action" value="add_background">
-                <div class="form-group">
-                    <label for="image_name">Image Name:</label>
-                    <input type="text" id="image_name" name="image_name" required maxlength="100" 
-                           placeholder="e.g., Nature Landscape">
-                </div>
-                <div class="form-group">
-                    <label for="image_url">Image URL:</label>
-                    <input type="url" id="image_url" name="image_url" required maxlength="255" 
-                           placeholder="e.g., img/nature.jpg or https://example.com/image.jpg">
-                </div>
-                <button type="submit" class="btn btn-primary">Add Background Image</button>
-            </form>
+            <a href="add_background.php" class="btn btn-primary">Add New Background Image</a>
         </div>
 
         <h2>Manage Background Images</h2>
@@ -303,9 +281,33 @@ $backgrounds_result = $conn->query($backgrounds_sql);
             <?php if ($backgrounds_result->num_rows > 0): ?>
                 <?php while ($bg = $backgrounds_result->fetch_assoc()): ?>
                     <div class="background-card">
-                        <div class="background-preview" style="background-image: url('<?php echo htmlspecialchars($bg['image_url']); ?>');">
+                        <?php 
+                        // Handle image URL for preview - add ../ for local paths
+                        $preview_url = $bg['image_url'];
+                        $file_exists = true;
+                        
+                        if (!filter_var($preview_url, FILTER_VALIDATE_URL)) {
+                            if (strpos($bg['image_url'], 'uploads/backgrounds/') === 0) {
+                                // Check if file exists for uploaded images
+                                $file_path = '../' . $bg['image_url'];
+                                $file_exists = file_exists($file_path);
+                                if ($file_exists) {
+                                    // Use image server for uploaded files
+                                    $preview_url = '../backend/serve_image.php?path=' . urlencode($bg['image_url']);
+                                }
+                            } else {
+                                // Regular local files
+                                $preview_url = '../' . $preview_url;
+                            }
+                        }
+                        ?>
+                        <div class="background-preview" style="background-image: url('<?php echo htmlspecialchars($preview_url); ?>');">
                             <div style="background: rgba(255,255,255,0.8); padding: 5px 10px; border-radius: 3px;">
-                                Preview
+                                <?php if (!$file_exists): ?>
+                                    <span style="color: red;">File Missing</span>
+                                <?php else: ?>
+                                    Preview
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="background-info">
@@ -321,14 +323,7 @@ $backgrounds_result = $conn->query($backgrounds_sql);
                                 Used in: <?php echo $bg['usage_count']; ?> games
                             </div>
                             <div class="background-actions">
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="action" value="toggle_active">
-                                    <input type="hidden" name="image_id" value="<?php echo $bg['image_id']; ?>">
-                                    <input type="hidden" name="is_active" value="<?php echo $bg['is_active']; ?>">
-                                    <button type="submit" class="btn <?php echo $bg['is_active'] ? 'btn-warning' : 'btn-success'; ?>">
-                                        <?php echo $bg['is_active'] ? 'Deactivate' : 'Activate'; ?>
-                                    </button>
-                                </form>
+                                <a href="edit_background.php?id=<?php echo $bg['image_id']; ?>" class="btn btn-primary">Edit</a>
                                 
                                 <?php if ($bg['usage_count'] == 0): ?>
                                     <form method="POST" style="display: inline;">

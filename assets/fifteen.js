@@ -17,6 +17,11 @@ window.onload = function () {
   const shuffleBtn = document.getElementById("shufflebutton")       // Shuffle/start/reset game button.
   const leaderboardBtn = document.getElementById("leaderboard-btn") // Leaderboard button.
   const adminBtn = document.getElementById("admin-btn")             // Admin button.
+  const backgroundSelect = document.getElementById("background-select") // Background selector
+
+  // Background functionality
+  let availableBackgrounds = [];
+  let currentBackgroundId = null;
 
   // User authentication elements
   const loggedInSection = document.getElementById("logged-in-section")
@@ -34,6 +39,9 @@ window.onload = function () {
 
   // Check user authentication status on page load
   checkUserAuth();
+  
+  // Load available backgrounds and set random default
+  loadBackgrounds();
 
   // Function to check user authentication status
   function checkUserAuth() {
@@ -141,7 +149,7 @@ window.onload = function () {
       puzzle_size: "4x4",
       time_taken_seconds: timeTaken,
       moves_count: moveCount,
-      background_image_id: null,
+      background_image_id: currentBackgroundId,
       win_status: won
     };
 
@@ -313,6 +321,70 @@ window.onload = function () {
     tiles.forEach((tile) => {
       tile.classList.toggle("movablepiece", isMovable(tile.x, tile.y))
     })
+  }
+
+  // Load available backgrounds from the server
+  function loadBackgrounds() {
+    fetch('backend/get_backgrounds.php')
+      .then(response => response.json())
+      .then(data => {
+        availableBackgrounds = data.backgrounds;
+        populateBackgroundSelector();
+        setRandomBackground();
+      })
+      .catch(error => {
+        console.error('Error loading backgrounds:', error);
+        // Fallback to default background
+        availableBackgrounds = [{
+          id: 0,
+          name: 'Default',
+          url: 'img/background.png'
+        }];
+        populateBackgroundSelector();
+      });
+  }
+
+  // Populate the background selector dropdown
+  function populateBackgroundSelector() {
+    backgroundSelect.innerHTML = '';
+    
+    availableBackgrounds.forEach(bg => {
+      const option = document.createElement('option');
+      option.value = bg.id;
+      option.textContent = bg.name;
+      backgroundSelect.appendChild(option);
+    });
+
+    // Add change event listener
+    backgroundSelect.addEventListener('change', function() {
+      const selectedId = parseInt(this.value);
+      changeBackground(selectedId);
+    });
+  }
+
+  // Set a random background on page load
+  function setRandomBackground() {
+    if (availableBackgrounds.length > 0) {
+      const randomIndex = Math.floor(Math.random() * availableBackgrounds.length);
+      const randomBackground = availableBackgrounds[randomIndex];
+      changeBackground(randomBackground.id);
+      backgroundSelect.value = randomBackground.id;
+    }
+  }
+
+  // Change the background image
+  function changeBackground(backgroundId) {
+    const selectedBackground = availableBackgrounds.find(bg => bg.id == backgroundId);
+    if (selectedBackground) {
+      currentBackgroundId = backgroundId;
+      
+      // Update all puzzle pieces with new background
+      tiles.forEach(tile => {
+        tile.style.backgroundImage = `url('${selectedBackground.url}')`;
+      });
+      
+      console.log(`Background changed to: ${selectedBackground.name}`);
+    }
   }
 
   // Initial visual update for movable tiles.

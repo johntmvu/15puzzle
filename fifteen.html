@@ -38,6 +38,15 @@
     <h1>Fifteen Puzzle</h1>
     <div id="timer">Time left: 120</div>
     <div id="move-count">Moves: 0</div>
+    
+    <!-- Background Selector -->
+    <div id="background-selector" style="position: absolute; top: 80px; left: 20px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 8px; font-size: 14px;">
+        <label for="background-select" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Background:</label>
+        <select id="background-select" style="padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; background: white; font-size: 14px;">
+            <option value="">Loading backgrounds...</option>
+        </select>
+    </div>
+    
     <div id="puzzlearea"></div> <!-- Display tiles -->
 
 <!--start button-->

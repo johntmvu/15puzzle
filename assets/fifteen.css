@@ -91,6 +91,129 @@ button:hover {
     font-size: 100px;
     font-weight: bold;
     border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+}
+
+#timer {
+    position: absolute;
+    top: 20px;
+    right: 130px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+#move-count {
+    position: absolute;
+    top: 20px;
+    right: 300px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+#music-control button {
+  background-color: rgba(128, 128, 128, 0.5);
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 30px;
+  margin-left: 30px;
+}
+
+#music-control button:hover {
+  background-color: rgba(128, 128, 128, 0.7);
+}
+
+#controls {
+    text-align: center;   
+    margin-top: 20px;        
+}
+
+#controls button {
+    margin: 0 10px;
+}
+
+#puzzlearea {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
+}
+
+.puzzlepiece {
+    width: 96px;
+    height: 96px;
+    border: 2px solid black;
+    font-size: 32pt;
+    position: absolute;
+    background-image: url('img/background.png');
+    background-size: 400px 400px;
+    font-family: sans-serif;
+    text-align: center;
+    line-height: 96px;
+    cursor: default;
+    transition: all 0.3s ease;
+}
+
+#puzzlearea {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
+}
+
+.puzzlepiece {
+    width: 96px;
+    height: 96px;
+    border: 2px solid black;
+    font-size: 32pt;
+    position: absolute;
+    background-image: url('../img/background.png');
+    background-size: 400px 400px;
+    font-family: sans-serif;
+    text-align: center;
+    line-height: 96px;
+    cursor: default;
+    transition: all 0.3s ease;
+}
+
+.movablepiece {
+    cursor: pointer;
+}
+
+.movablepiece:hover {
+    border-color: red;
+    color: #006600;
+    text-decoration: underline;
+}
+
+#popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 12;
+    flex-direction: column;
+}
+
+#popup .message {
+    background: linear-gradient(red, transparent),
+                linear-gradient(to top left, lime, transparent),
+                linear-gradient(to top right, blue, transparent);
+    background-blend-mode: screen;
+    padding: 200px 340px;
+    font-size: 100px;
+    font-weight: bold;
+    border-radius: 10px;
     text-align: center;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     display: flex;

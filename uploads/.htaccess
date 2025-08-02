@@ -1,0 +1,43 @@
+# Enable file serving
+Options +FollowSymLinks
+
+# Allow image files only
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+    Order Allow,Deny
+    Allow from all
+    
+    # Set proper MIME types
+    <IfModule mod_mime.c>
+        AddType image/jpeg .jpg .jpeg
+        AddType image/png .png
+        AddType image/gif .gif
+        AddType image/webp .webp
+    </IfModule>
+    
+    # Add cache headers
+    <IfModule mod_expires.c>
+        ExpiresActive On
+        ExpiresDefault "access plus 1 year"
+    </IfModule>
+    
+    # Add security headers
+    <IfModule mod_headers.c>
+        Header always set X-Content-Type-Options nosniff
+        Header always set Cache-Control "public, max-age=31536000"
+    </IfModule>
+</FilesMatch>
+
+# Deny everything else
+<FilesMatch "(?i)\.(php|html|js|css|txt|md|log)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Prevent directory browsing
+Options -Indexes
+
+# Security: Prevent access to sensitive files
+<Files "*.htaccess">
+    Order Deny,Allow
+    Deny from all
+</Files>
