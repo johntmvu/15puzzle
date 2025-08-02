@@ -11,6 +11,7 @@ window.onload = function () {
   const popup = document.getElementById("popup")                    // Win/loss message popup.
   const popupMessage = document.getElementById("popup-message")     // Message content inside the popup.
   const popupPlayAgain = document.getElementById("popup-play-again") // Button to reset the game after game ends.
+  const mainMenuBtn = document.getElementById("main-menu-btn")
   const timerEl = document.getElementById("timer")                  // Timer display element.
   const moveCountEl = document.getElementById("move-count")         // Move count display element.
   const shuffleBtn = document.getElementById("shufflebutton")       // Shuffle/start/reset game button.
@@ -79,6 +80,10 @@ window.onload = function () {
         if (adminBtn) adminBtn.style.display = 'none';
       });
   }
+
+  mainMenuBtn.addEventListener("click", function () {
+    window.location.href = "index.php";
+  });
 
   // Logout functionality
   if (logoutBtn) {

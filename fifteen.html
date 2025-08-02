@@ -23,12 +23,13 @@
     
     <!-- User authentication section -->
     <div id="user-info" style="text-align: right; margin: 10px 20px 20px 0; background: rgba(255,255,255,0.9); padding: 8px 12px; border-radius: 5px; float: right; clear: both;">
-        <div id="logged-in-section" style="display: none;">
-            Welcome, <span id="username-display"></span>!
-            <button id="logout-btn" style="margin-left: 10px; padding: 4px 8px; font-size: 12px;">Logout</button>
+        <div id="logged-in-section" style="display: none; text-align: center;">
+            Welcome, <span id="username-display"></span>!<br>
+            <button id="logout-btn" style="padding: 4px 8px; font-size: 12px;">Logout</button>
         </div>
         <div id="guest-section">
-            <a href="backend/login.php" style="font-size: 12px;">Login</a> | <a href="backend/register.php" style="font-size: 12px;">Register</a>
+            <a href="backend/login.php" style="font-size: 12px;">Login</a> | <a href="backend/register.php" style="font-size: 12px;">Register</a><br>
+            <a href="index.php" id="guest-main-menu" style="display: inline-block; padding: 6px 12px; font-size: 14px; background: #ffc107;color: black; border-radius: 20px; text-decoration: none;">Main Menu</a>
         </div>
     </div>
     
@@ -48,8 +49,21 @@
 
 <!-- Win or lose pop up -->
     <div id="popup">
-        <div class="message" id="popup-message"></div>
-        <button id="popup-play-again">Play Again</button>
+        <div class="message">
+            <div id="popup-message"></div>
+            <div id="popup-text"></div><br>
+
+            <div id="popup-buttons">
+                <button id="main-menu-btn">Main Menu</button>
+                <button id="popup-play-again">Play Again</button>
+            </div>
+        </div>
     </div>
+
+<!-- Links to HTML and CSS validators. --> 
+    <p>
+        <a href="https://validator.w3.org/"><img src="img/w3c-xhtml.png" alt="Valid HTML"></a>
+        <a href="https://jigsaw.w3.org/css-validator/"><img src="img/w3c-css.png" alt="Valid CSS"></a>
+    </p>
 </body>
 </html>
